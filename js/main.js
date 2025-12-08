@@ -1,12 +1,12 @@
 // main.js - Script principal da aplicação
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Carregar personagens salvos
     loadSavedCharacters();
-    
+
     // Configurar demonstração de dados
     setupDiceDemo();
-    
+
     // Animações de entrada
     animateElements();
 });
@@ -14,18 +14,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // Carrega personagens salvos do localStorage
 function loadSavedCharacters() {
     const charactersList = document.getElementById('characters-list');
-    
+
     // Verifica se há personagens salvos
     const savedCharacters = JSON.parse(localStorage.getItem('rpgCharacters')) || [];
-    
+
     if (savedCharacters.length === 0) {
         // Mostra estado vazio (já está no HTML)
         return;
     }
-    
+
     // Limpa o estado vazio
     charactersList.innerHTML = '';
-    
+
     // Cria cards para cada personagem
     savedCharacters.forEach((character, index) => {
         const characterCard = createCharacterCard(character, index);
@@ -56,7 +56,7 @@ function createCharacterCard(character, index) {
             </button>
         </div>
     `;
-    
+
     return card;
 }
 
@@ -64,9 +64,9 @@ function createCharacterCard(character, index) {
 function setupDiceDemo() {
     const diceButtons = document.querySelectorAll('.dice-demo');
     const resultDisplay = document.getElementById('dice-result');
-    
+
     diceButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const diceType = this.dataset.dice;
             rollDemoDice(diceType, resultDisplay);
         });
@@ -77,15 +77,15 @@ function setupDiceDemo() {
 function rollDemoDice(diceType, displayElement) {
     displayElement.textContent = "Rolando...";
     displayElement.classList.add('dice-rolling');
-    
+
     // Determina o número máximo baseado no tipo de dado
     const max = parseInt(diceType.substring(1));
-    
+
     setTimeout(() => {
         const result = Math.floor(Math.random() * max) + 1;
         displayElement.textContent = `Resultado: ${result}`;
         displayElement.classList.remove('dice-rolling');
-        
+
         // Efeito sonoro (opcional)
         playDiceSound();
     }, 500);
@@ -100,11 +100,11 @@ function playDiceSound() {
 // Anima elementos na página
 function animateElements() {
     const featureCards = document.querySelectorAll('.feature-card');
-    
+
     featureCards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             card.style.opacity = '1';
