@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogar - Sistema RPG</title>
+    <link rel="stylesheet" href="../css/play-game.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Cabeçalho do Jogo -->
+        <header class="game-header">
+            <div class="header-left">
+                <a href="../index.html" class="menu-button">
+                    <i class="fas fa-home"></i> Menu
+                </a>
+                <div class="game-title">
+                    <i class="fas fa-dragon"></i>
+                    <h1>Modo Aventura</h1>
+                </div>
+            </div>
+            
+            <div class="character-selector">
+                <div class="selector-container">
+                    <i class="fas fa-user"></i>
+                    <select id="current-character">
+                        <option value="">Selecione um Personagem</option>
+                        <!-- Personagens carregados via JavaScript -->
+                    </select>
+                    <button id="refresh-chars" title="Atualizar lista">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <button id="new-character" class="new-char-btn">
+                    <i class="fas fa-plus"></i> Novo
+                </button>
+            </div>
+            
+            <div class="header-right">
+                <div class="game-clock">
+                    <i class="fas fa-clock"></i>
+                    <span id="game-time">00:00:00</span>
+                </div>
+                <button id="game-settings" class="settings-btn" title="Configurações">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Painel de Status do Personagem -->
+        <section class="character-status">
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="char-avatar" id="char-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="char-basic-info">
+                        <h2 id="char-display-name">Nome do Personagem</h2>
+                        <div class="char-details">
+                            <span class="char-class" id="char-class">Classe</span>
+                            <span class="char-race" id="char-race">Raça</span>
+                            <span class="char-level">Nível <span id="char-level">1</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status-bars">
+                    <div class="status-bar health-bar">
+                        <div class="bar-label">
+                            <i class="fas fa-heart"></i>
+                            <span>Vida</span>
+                            <span class="bar-value" id="hp-value">10/10</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="hp-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="status-bar mana-bar">
+                        <div class="bar-label">
+                            <i class="fas fa-bolt"></i>
+                            <span>Mana</span>
+                            <span class="bar-value" id="mana-value">10/10</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="mana-bar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="status-bar xp-bar">
+                        <div class="bar-label">
+                            <i class="fas fa-star"></i>
+                            <span>Experiência</span>
+                            <span class="bar-value" id="xp-value">0/100</span>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-fill" id="xp-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <span class="stat-label">CA</span>
+                        <span class="stat-value" id="stat-ac">10</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Iniciativa</span>
+                        <span class="stat-value" id="stat-initiative">+0</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Deslocamento</span>
+                        <span class="stat-value" id="stat-speed">9m</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Ouro</span>
+                        <span class="stat-value" id="stat-gold">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Área Principal do Jogo -->
+        <main class="game-main">
+            <!-- Coluna Esquerda: Rolagem de Dados e Combate -->
+            <aside class="game-sidebar left-sidebar">
+                <!-- Sistema de Dados -->
+                <div class="panel dice-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-dice"></i>
+                        <h3>Rolagem de Dados</h3>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="dice-buttons">
+                            <button class="dice-btn" data-dice="d4">
+                                <span class="dice-label">d4</span>
+                            </button>
+                            <button class="dice-btn" data-dice="d6">
+                                <span class="dice-label">d6</span>
+                            </button>
+                            <button class="dice-btn" data-dice="d8">
+                                <span class="dice-label">d8</span>
+                            </button>
+                            <button class="dice-btn" data-dice="d10">
+                                <span class="dice-label">d10</span>
+                            </button>
+                            <button class="dice-btn" data-dice="d12">
+                                <span class="dice-label">d12</span>
+                            </button>
+                            <button class="dice-btn" data-dice="d20">
+                                <span class="dice-label">d20</span>
+                            </button>
+                            <button class="dice-btn" data-dice="d100">
+                                <span class="dice-label">d100</span>
+                            </button>
+                        </div>
+                        
+                        <div class="custom-roll">
+                            <h4>Rolagem Customizada</h4>
+                            <div class="custom-controls">
+                                <div class="input-group">
+                                    <input type="number" id="dice-count" value="1" min="1" max="10">
+                                    <label>Quantidade</label>
+                                </div>
+                                <div class="input-group">
+                                    <select id="dice-type">
+                                        <option value="4">d4</option>
+                                        <option value="6" selected>d6</option>
+                                        <option value="8">d8</option>
+                                        <option value="10">d10</option>
+                                        <option value="12">d12</option>
+                                        <option value="20">d20</option>
+                                        <option value="100">d100</option>
+                                    </select>
+                                    <label>Tipo</label>
+                                </div>
+                                <div class="input-group">
+                                    <input type="number" id="dice-modifier" value="0" min="-20" max="20">
+                                    <label>Modificador</label>
+                                </div>
+                            </div>
+                            <button id="roll-custom" class="roll-btn">
+                                <i class="fas fa-dice-d20"></i> Rolar
+                            </button>
+                        </div>
+                        
+                        <div class="roll-history">
+                            <h4>Histórico</h4>
+                            <div class="history-list" id="dice-history">
+                                <div class="history-empty">
+                                    <i class="fas fa-history"></i>
+                                    <p>Nenhuma rolagem ainda</p>
+                                </div>
+                            </div>
+                            <button id="clear-history" class="clear-btn">
+                                <i class="fas fa-trash"></i> Limpar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sistema de Combate -->
+                <div class="panel combat-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-fist-raised"></i>
+                        <h3>Sistema de Combate</h3>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="combat-status">
+                            <div class="combat-mode">
+                                <span class="mode-label">Modo:</span>
+                                <span class="mode-value" id="combat-mode">Exploração</span>
+                            </div>
+                            <div class="turn-counter">
+                                <span class="turn-label">Turno:</span>
+                                <span class="turn-value" id="turn-count">0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="combat-actions">
+                            <h4>Ações de Combate</h4>
+                            <div class="action-grid">
+                                <button class="action-btn attack-btn" data-action="attack">
+                                    <i class="fas fa-crosshairs"></i>
+                                    <span>Ataque</span>
+                                </button>
+                                <button class="action-btn defend-btn" data-action="defend">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Defesa</span>
+                                </button>
+                                <button class="action-btn skill-btn" data-action="skill">
+                                    <i class="fas fa-star"></i>
+                                    <span>Perícia</span>
+                                </button>
+                                <button class="action-btn item-btn" data-action="item">
+                                    <i class="fas fa-potion"></i>
+                                    <span>Item</span>
+                                </button>
+                                <button class="action-btn magic-btn" data-action="magic">
+                                    <i class="fas fa-hat-wizard"></i>
+                                    <span>Magia</span>
+                                </button>
+                                <button class="action-btn flee-btn" data-action="flee">
+                                    <i class="fas fa-running"></i>
+                                    <span>Fugir</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="combat-log">
+                            <h4>Log de Combate</h4>
+                            <div class="log-content" id="combat-log">
+                                <div class="log-empty">
+                                    <i class="fas fa-swords"></i>
+                                    <p>Nenhum combate iniciado</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Centro: Log da Aventura e Mapa -->
+            <section class="game-center">
+                <!-- Log da Aventura -->
+                <div class="panel adventure-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-scroll"></i>
+                        <h3>Log da Aventura</h3>
+                        <div class="panel-actions">
+                            <button id="clear-log" title="Limpar log">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button id="save-log" title="Salvar log">
+                                <i class="fas fa-save"></i>
+                            </button>
+                            <button id="export-log" title="Exportar log">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="adventure-log" id="adventure-log">
+                            <div class="welcome-message">
+                                <h4>Bem-vindo à sua aventura!</h4>
+                                <p>Selecione um personagem para começar sua jornada épica.</p>
+                                <p>Use o painel de dados à esquerda para rolar testes.</p>
+                                <p>Registre suas ações e descobertas no log abaixo.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="log-input-area">
+                            <div class="input-controls">
+                                <select id="log-type">
+                                    <option value="action">🎬 Ação</option>
+                                    <option value="dialogue">💬 Diálogo</option>
+                                    <option value="combat">⚔️ Combate</option>
+                                    <option value="exploration">🗺️ Exploração</option>
+                                    <option value="loot">💰 Saque</option>
+                                    <option value="note">📝 Nota</option>
+                                </select>
+                                <button id="add-dice" title="Adicionar rolagem">
+                                    <i class="fas fa-dice"></i>
+                                </button>
+                                <button id="add-timestamp" title="Adicionar timestamp">
+                                    <i class="fas fa-clock"></i>
+                                </button>
+                            </div>
+                            <div class="message-input">
+                                <input type="text" id="log-message" placeholder="Digite sua ação, diálogo ou observação...">
+                                <button id="send-log">
+                                    <i class="fas fa-paper-plane"></i> Enviar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mapa e Localização -->
+                <div class="panel map-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-map"></i>
+                        <h3>Mapa da Aventura</h3>
+                        <div class="panel-actions">
+                            <button id="zoom-in" title="Aumentar zoom">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                            <button id="zoom-out" title="Diminuir zoom">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <button id="reset-map" title="Resetar mapa">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="map-container">
+                            <div class="map-display" id="map-display">
+                                <div class="map-grid">
+                                    <!-- Grade do mapa será gerada dinamicamente -->
+                                </div>
+                                <div class="player-marker" id="player-marker">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="map-info">
+                                <div class="location-info">
+                                    <h4>Localização Atual</h4>
+                                    <p id="current-location">Floresta dos Sussurros</p>
+                                    <p class="location-desc" id="location-desc">Uma floresta densa e misteriosa...</p>
+                                </div>
+                                
+                                <div class="map-controls">
+                                    <h4>Controles</h4>
+                                    <div class="direction-buttons">
+                                        <button class="dir-btn" data-direction="north">
+                                            <i class="fas fa-arrow-up"></i>
+                                        </button>
+                                        <div class="horizontal-controls">
+                                            <button class="dir-btn" data-direction="west">
+                                                <i class="fas fa-arrow-left"></i>
+                                            </button>
+                                            <div class="center-point">
+                                                <i class="fas fa-crosshairs"></i>
+                                            </div>
+                                            <button class="dir-btn" data-direction="east">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                        <button class="dir-btn" data-direction="south">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coluna Direita: Inventário e Perícias -->
+            <aside class="game-sidebar right-sidebar">
+                <!-- Inventário -->
+                <div class="panel inventory-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-backpack"></i>
+                        <h3>Inventário</h3>
+                        <div class="panel-actions">
+                            <button id="sort-inventory" title="Ordenar itens">
+                                <i class="fas fa-sort"></i>
+                            </button>
+                            <button id="manage-inventory" title="Gerenciar inventário">
+                                <i class="fas fa-cog"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="inventory-stats">
+                            <div class="inv-stat">
+                                <span class="stat-label">Capacidade</span>
+                                <span class="stat-value" id="capacity-value">50/100</span>
+                            </div>
+                            <div class="inv-stat">
+                                <span class="stat-label">Peso</span>
+                                <span class="stat-value" id="weight-value">12.5kg</span>
+                            </div>
+                            <div class="inv-stat">
+                                <span class="stat-label">Ouro</span>
+                                <span class="stat-value" id="gold-value">150</span>
+                            </div>
+                        </div>
+                        
+                        <div class="inventory-tabs">
+                            <button class="inv-tab active" data-tab="all">
+                                <i class="fas fa-boxes"></i> Todos
+                            </button>
+                            <button class="inv-tab" data-tab="weapons">
+                                <i class="fas fa-sword"></i> Armas
+                            </button>
+                            <button class="inv-tab" data-tab="armor">
+                                <i class="fas fa-shield-alt"></i> Armadura
+                            </button>
+                            <button class="inv-tab" data-tab="consumables">
+                                <i class="fas fa-potion"></i> Consumíveis
+                            </button>
+                            <button class="inv-tab" data-tab="quest">
+                                <i class="fas fa-scroll"></i> Quest
+                            </button>
+                        </div>
+                        
+                        <div class="inventory-items">
+                            <div class="inv-tab-content active" id="tab-all">
+                                <div class="empty-inventory">
+                                    <i class="fas fa-box-open"></i>
+                                    <p>Inventário vazio</p>
+                                </div>
+                            </div>
+                            <!-- Outras tabs serão geradas dinamicamente -->
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <button class="quick-action" id="use-item">
+                                <i class="fas fa-hand-holding"></i> Usar
+                            </button>
+                            <button class="quick-action" id="drop-item">
+                                <i class="fas fa-trash"></i> Descartar
+                            </button>
+                            <button class="quick-action" id="equip-item">
+                                <i class="fas fa-tshirt"></i> Equipar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Perícias e Atributos -->
+                <div class="panel skills-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Perícias e Atributos</h3>
+                        <div class="panel-actions">
+                            <button id="roll-check" title="Rolar teste">
+                                <i class="fas fa-dice-d20"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="attributes-display">
+                            <h4>Atributos</h4>
+                            <div class="attributes-grid">
+                                <div class="attribute-item">
+                                    <span class="attr-label">FOR</span>
+                                    <span class="attr-value" id="attr-str">10</span>
+                                    <span class="attr-mod" id="mod-str">+0</span>
+                                </div>
+                                <div class="attribute-item">
+                                    <span class="attr-label">DES</span>
+                                    <span class="attr-value" id="attr-dex">10</span>
+                                    <span class="attr-mod" id="mod-dex">+0</span>
+                                </div>
+                                <div class="attribute-item">
+                                    <span class="attr-label">CON</span>
+                                    <span class="attr-value" id="attr-con">10</span>
+                                    <span class="attr-mod" id="mod-con">+0</span>
+                                </div>
+                                <div class="attribute-item">
+                                    <span class="attr-label">INT</span>
+                                    <span class="attr-value" id="attr-int">10</span>
+                                    <span class="attr-mod" id="mod-int">+0</span>
+                                </div>
+                                <div class="attribute-item">
+                                    <span class="attr-label">SAB</span>
+                                    <span class="attr-value" id="attr-wis">10</span>
+                                    <span class="attr-mod" id="mod-wis">+0</span>
+                                </div>
+                                <div class="attribute-item">
+                                    <span class="attr-label">CAR</span>
+                                    <span class="attr-value" id="attr-cha">10</span>
+                                    <span class="attr-mod" id="mod-cha">+0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="skills-display">
+                            <h4>Perícias</h4>
+                            <div class="skills-list" id="skills-list">
+                                <div class="skill-item">
+                                    <span class="skill-name">Atletismo (FOR)</span>
+                                    <span class="skill-mod">+2</span>
+                                    <button class="skill-roll" data-skill="athletics">
+                                        <i class="fas fa-dice"></i>
+                                    </button>
+                                </div>
+                                <!-- Mais perícias serão geradas dinamicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sistema de Notas -->
+                <div class="panel notes-panel">
+                    <div class="panel-header">
+                        <i class="fas fa-sticky-note"></i>
+                        <h3>Notas da Aventura</h3>
+                        <div class="panel-actions">
+                            <button id="new-note" title="Nova nota">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="notes-list" id="notes-list">
+                            <div class="empty-notes">
+                                <i class="fas fa-edit"></i>
+                                <p>Nenhuma nota ainda</p>
+                            </div>
+                        </div>
+                        
+                        <div class="quick-note">
+                            <textarea id="quick-note-input" placeholder="Anotação rápida..."></textarea>
+                            <button id="save-note">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Rodapé do Jogo -->
+        <footer class="game-footer">
+            <div class="footer-left">
+                <div class="session-info">
+                    <span class="info-label">Sessão iniciada:</span>
+                    <span class="info-value" id="session-start">-</span>
+                </div>
+                <div class="session-info">
+                    <span class="info-label">Duração:</span>
+                    <span class="info-value" id="session-duration">00:00</span>
+                </div>
+            </div>
+            
+            <div class="footer-center">
+                <div class="game-messages" id="game-messages">
+                    <span class="message" id="current-message">Bem-vindo ao Sistema RPG!</span>
+                </div>
+            </div>
+            
+            <div class="footer-right">
+                <button id="quick-save" class="footer-btn" title="Salvar rápido">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+                <button id="quick-load" class="footer-btn" title="Carregar">
+                    <i class="fas fa-folder-open"></i> Carregar
+                </button>
+                <button id="help-btn" class="footer-btn" title="Ajuda">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modais -->
+    
+    <!-- Modal de Inventário Detalhado -->
+    <div id="inventory-modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-archive"></i> Inventário Completo</h2>
+            <div class="modal-body" id="full-inventory">
+                <!-- Conteúdo do inventário -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Configurações -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-cog"></i> Configurações do Jogo</h2>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>Interface</h3>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="dark-mode" checked>
+                            Modo Escuro
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="animations" checked>
+                            Animações
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="sounds" checked>
+                            Sons
+                        </label>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <h3>Jogabilidade</h3>
+                    <div class="setting-item">
+                        <label for="difficulty">Dificuldade:</label>
+                        <select id="difficulty">
+                            <option value="easy">Fácil</option>
+                            <option value="normal" selected>Normal</option>
+                            <option value="hard">Difícil</option>
+                        </select>
+                    </div>
+                    <div class="setting-item">
+                        <label for="auto-save">Auto-save:</label>
+                        <select id="auto-save">
+                            <option value="5">5 minutos</option>
+                            <option value="10" selected>10 minutos</option>
+                            <option value="15">15 minutos</option>
+                            <option value="30">30 minutos</option>
+                            <option value="0">Desativado</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="save-settings" class="btn-primary">Salvar</button>
+                <button id="reset-settings" class="btn-secondary">Resetar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Ajuda -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content large-modal">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-question-circle"></i> Ajuda - Sistema RPG</h2>
+            <div class="modal-body">
+                <div class="help-sections">
+                    <div class="help-section">
+                        <h3>🎲 Sistema de Dados</h3>
+                        <p>Clique nos botões de dados para rolar rapidamente.</p>
+                        <p>Use a rolagem customizada para expressões complexas.</p>
+                        <p>O histórico mantém suas últimas 50 rolagens.</p>
+                    </div>
+                    <div class="help-section">
+                        <h3>⚔️ Sistema de Combate</h3>
+                        <p>Use as ações de combate para interagir em batalhas.</p>
+                        <p>O log de combate registra todos os eventos.</p>
+                    </div>
+                    <div class="help-section">
+                        <h3>🗺️ Sistema de Mapa</h3>
+                        <p>Use as setas de direção para mover seu personagem.</p>
+                        <p>Clique no mapa para inspecionar áreas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Nova Nota -->
+    <div id="note-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2><i class="fas fa-sticky-note"></i> Nova Nota</h2>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="note-title">Título:</label>
+                    <input type="text" id="note-title" placeholder="Título da nota">
+                </div>
+                <div class="form-group">
+                    <label for="note-content">Conteúdo:</label>
+                    <textarea id="note-content" rows="6" placeholder="Escreva sua nota aqui..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="note-category">Categoria:</label>
+                    <select id="note-category">
+                        <option value="general">Geral</option>
+                        <option value="quest">Missão</option>
+                        <option value="npc">NPC</option>
+                        <option value="location">Localização</option>
+                        <option value="loot">Saque</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="save-note-modal" class="btn-primary">Salvar</button>
+                <button id="cancel-note" class="btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/game-engine.js"></script>
+    <script src="../js/dice-roller.js"></script>
+    <script src="../js/inventory-system.js"></script>
+    <script src="../js/combat-system.js"></script>
+</body>
+</html>

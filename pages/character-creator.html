@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criador de Personagem - Sistema RPG</title>
+  <link rel="stylesheet" href="../css/character-creator.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <div class="creator-container">
+    <header class="creator-header">
+      <a href="../index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Voltar
+      </a>
+      <h1><i class="fas fa-user-plus"></i> Criador de Personagem</h1>
+    </header>
+
+    <div class="creator-wrapper">
+      <!-- Navegação por abas -->
+      <nav class="creator-nav">
+        <button class="nav-btn active" data-section="basic">
+          <i class="fas fa-user"></i> Básico
+        </button>
+        <button class="nav-btn" data-section="attributes">
+          <i class="fas fa-dumbbell"></i> Atributos
+        </button>
+        <button class="nav-btn" data-section="skills">
+          <i class="fas fa-star"></i> Perícias
+        </button>
+        <button class="nav-btn" data-section="inventory">
+          <i class="fas fa-backpack"></i> Inventário
+        </button>
+        <button class="nav-btn" data-section="appearance">
+          <i class="fas fa-palette"></i> Aparência
+        </button>
+      </nav>
+
+      <!-- Área de criação -->
+      <div class="creation-area">
+        <!-- Seção Básica -->
+        <section id="basic-section" class="creation-section active">
+          <h2><i class="fas fa-info-circle"></i> Informações Básicas</h2>
+
+          <div class="form-group">
+            <label for="char-name"><i class="fas fa-signature"></i> Nome do Personagem</label>
+            <input type="text" id="char-name" placeholder="Ex: Aragorn, Gandalf, Legolas...">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="char-race"><i class="fas fa-users"></i> Raça</label>
+              <select id="char-race">
+                <option value="human">Humano</option>
+                <option value="elf">Elfo</option>
+                <option value="dwarf">Anão</option>
+                <option value="halfling">Halfling</option>
+                <option value="orc">Orc</option>
+                <option value="dragonborn">Dragonborn</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="char-class"><i class="fas fa-shield-alt"></i> Classe</label>
+              <select id="char-class">
+                <option value="warrior">Guerreiro</option>
+                <option value="mage">Mago</option>
+                <option value="rogue">Ladino</option>
+                <option value="cleric">Clérigo</option>
+                <option value="ranger">Ranger</option>
+                <option value="bard">Bardo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="char-background"><i class="fas fa-book"></i> Histórico</label>
+            <textarea id="char-background" rows="3" placeholder="Conte a história do seu personagem..."></textarea>
+          </div>
+        </section>
+
+        <!-- Seção Atributos -->
+        <section id="attributes-section" class="creation-section">
+          <h2><i class="fas fa-chart-bar"></i> Atributos</h2>
+          <div class="points-info">
+            <p><i class="fas fa-coins"></i> Pontos disponíveis: <span id="points-count">27</span></p>
+            <p class="hint">(Cada ponto até 13 custa 1, acima custa 2)</p>
+          </div>
+          <div id="attributes-container"></div>
+        </section>
+
+        <!-- Seção Perícias -->
+        <section id="skills-section" class="creation-section">
+          <h2><i class="fas fa-tools"></i> Perícias</h2>
+          <p>Selecione as perícias iniciais do seu personagem:</p>
+          <div class="skills-grid" id="skills-container">
+            <!-- Perícias serão geradas por JS -->
+          </div>
+        </section>
+
+        <!-- Seção Inventário -->
+        <section id="inventory-section" class="creation-section">
+          <h2><i class="fas fa-archive"></i> Inventário Inicial</h2>
+          <div class="inventory-grid" id="inventory-container">
+            <!-- Itens serão gerados por JS -->
+          </div>
+          <div class="inventory-controls">
+            <button id="add-item-btn"><i class="fas fa-plus"></i> Adicionar Item</button>
+            <button id="clear-inventory-btn"><i class="fas fa-trash"></i> Limpar</button>
+          </div>
+        </section>
+
+        <!-- Seção Aparência -->
+        <section id="appearance-section" class="creation-section">
+          <h2><i class="fas fa-eye"></i> Aparência</h2>
+
+          <div class="form-group">
+            <label for="char-gender"><i class="fas fa-venus-mars"></i> Gênero</label>
+            <select id="char-gender">
+              <option value="male">Masculino</option>
+              <option value="female">Feminino</option>
+              <option value="other">Outro</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="char-age"><i class="fas fa-birthday-cake"></i> Idade</label>
+            <input type="number" id="char-age" min="10" max="500" value="25">
+          </div>
+
+          <div class="form-group">
+            <label for="char-height"><i class="fas fa-ruler-vertical"></i> Altura (cm)</label>
+            <input type="number" id="char-height" min="50" max="300" value="175">
+          </div>
+
+          <div class="form-group">
+            <label for="char-weight"><i class="fas fa-weight"></i> Peso (kg)</label>
+            <input type="number" id="char-weight" min="20" max="300" value="70">
+          </div>
+
+          <div class="form-group">
+            <label for="char-description"><i class="fas fa-file-alt"></i> Descrição Física</label>
+            <textarea id="char-description" rows="4" placeholder="Descreva a aparência do seu personagem..."></textarea>
+          </div>
+        </section>
+      </div>
+
+      <!-- Preview do personagem -->
+      <aside class="character-preview">
+        <div class="preview-header">
+          <h3><i class="fas fa-eye"></i> Pré-visualização</h3>
+          <div class="preview-actions">
+            <button id="randomize-btn"><i class="fas fa-random"></i> Aleatório</button>
+            <button id="reset-btn"><i class="fas fa-redo"></i> Resetar</button>
+          </div>
+        </div>
+
+        <div class="preview-card">
+          <div class="preview-avatar">
+            <div class="avatar-placeholder">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="level-badge">Nível 1</div>
+          </div>
+
+          <div class="preview-info">
+            <h4 id="preview-name">Nome do Personagem</h4>
+            <div class="preview-details">
+              <p><i class="fas fa-users"></i> <span id="preview-race">Humano</span></p>
+              <p><i class="fas fa-shield-alt"></i> <span id="preview-class">Guerreiro</span></p>
+              <p><i class="fas fa-heart"></i> HP: <span id="preview-hp">10</span>/<span id="preview-max-hp">10</span></p>
+            </div>
+          </div>
+
+          <div class="preview-stats">
+            <div class="stat">
+              <span class="stat-label">FOR</span>
+              <span class="stat-value" id="preview-str">10</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">DES</span>
+              <span class="stat-value" id="preview-dex">10</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">CON</span>
+              <span class="stat-value" id="preview-con">10</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">INT</span>
+              <span class="stat-value" id="preview-int">10</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">SAB</span>
+              <span class="stat-value" id="preview-wis">10</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">CAR</span>
+              <span class="stat-value" id="preview-cha">10</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-actions-main">
+          <button id="save-character" class="save-btn">
+            <i class="fas fa-save"></i> Salvar Personagem
+          </button>
+          <button id="export-character" class="export-btn">
+            <i class="fas fa-download"></i> Exportar
+          </button>
+        </div>
+
+        <div class="preview-footer">
+          <p class="hint"><i class="fas fa-info-circle"></i> Todas as alterações são salvas automaticamente</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Modal para adicionar item -->
+  <div id="item-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h3><i class="fas fa-plus"></i> Adicionar Item</h3>
+      <div class="modal-body">
+        <!-- Conteúdo do modal -->
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/character-creator.js"></script>
+</body>
+
+</html>

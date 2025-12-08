@@ -1,4 +1,5 @@
 // main.js - Script principal da aplicação
+console.log('Sistema RPG iniciado!');
 
 document.addEventListener('DOMContentLoaded', function () {
     // Carregar personagens salvos
@@ -9,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Animações de entrada
     animateElements();
+    
+    // Configurar navegação
+    setupNavigation();
 });
 
 // Carrega personagens salvos do localStorage
@@ -57,7 +61,37 @@ function createCharacterCard(character, index) {
         </div>
     `;
 
+    // Adiciona eventos aos botões
+    setTimeout(() => {
+        const playBtn = card.querySelector('.btn-play');
+        const deleteBtn = card.querySelector('.btn-delete');
+        
+        if (playBtn) {
+            playBtn.addEventListener('click', () => {
+                // Salva o personagem selecionado
+                localStorage.setItem('currentCharacter', JSON.stringify(character));
+                window.location.href = 'pages/play-game.html';
+            });
+        }
+        
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', () => {
+                deleteCharacter(index);
+            });
+        }
+    }, 100);
+
     return card;
+}
+
+// Deleta um personagem
+function deleteCharacter(index) {
+    if (confirm('Tem certeza que deseja excluir este personagem?')) {
+        const savedCharacters = JSON.parse(localStorage.getItem('rpgCharacters')) || [];
+        savedCharacters.splice(index, 1);
+        localStorage.setItem('rpgCharacters', JSON.stringify(savedCharacters));
+        loadSavedCharacters(); // Recarrega a lista
+    }
 }
 
 // Configura demonstração de rolagem de dados
@@ -83,7 +117,7 @@ function rollDemoDice(diceType, displayElement) {
 
     setTimeout(() => {
         const result = Math.floor(Math.random() * max) + 1;
-        displayElement.textContent = `Resultado: ${result}`;
+        displayElement.textContent = `🎲 Resultado: ${result}`;
         displayElement.classList.remove('dice-rolling');
 
         // Efeito sonoro (opcional)
@@ -94,7 +128,25 @@ function rollDemoDice(diceType, displayElement) {
 // Toca som de dados rolando
 function playDiceSound() {
     // Pode ser implementado quando tiver arquivos de som
-    console.log('Som de dados rolando!');
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+    } catch (e) {
+        console.log('Som de dados rolando!');
+    }
 }
 
 // Anima elementos na página
@@ -113,21 +165,84 @@ function animateElements() {
     });
 }
 
+// Configura navegação entre páginas
+function setupNavigation() {
+    // Verifica se há personagem ao clicar em "Jogar"
+    const playLinks = document.querySelectorAll('a[href*="play-game"]');
+    
+    playLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const savedCharacters = JSON.parse(localStorage.getItem('rpgCharacters')) || [];
+            if (savedCharacters.length === 0) {
+                e.preventDefault();
+                if (confirm('Você precisa criar um personagem primeiro. Ir para o criador de personagens?')) {
+                    window.location.href = 'pages/character-creator.html';
+                }
+            }
+        });
+    });
+}
+
+// Função global para rolar dados
+window.rollDice = function(sides, quantity = 1, modifier = 0) {
+    let total = 0;
+    let rolls = [];
+    
+    for (let i = 0; i < quantity; i++) {
+        const roll = Math.floor(Math.random() * sides) + 1;
+        rolls.push(roll);
+        total += roll;
+    }
+    
+    total += modifier;
+    
+    return {
+        total: total,
+        rolls: rolls,
+        modifier: modifier,
+        expression: `${quantity}d${sides}${modifier >= 0 ? '+' + modifier : modifier}`
+    };
+};
+
+// Função para salvar personagem
+window.saveCharacter = function(characterData) {
+    const savedCharacters = JSON.parse(localStorage.getItem('rpgCharacters')) || [];
+    
+    // Verifica se é um novo personagem ou edição
+    if (characterData.id) {
+        const index = savedCharacters.findIndex(char => char.id === characterData.id);
+        if (index !== -1) {
+            savedCharacters[index] = characterData;
+        } else {
+            characterData.id = Date.now();
+            savedCharacters.push(characterData);
+        }
+    } else {
+        characterData.id = Date.now();
+        savedCharacters.push(characterData);
+    }
+    
+    localStorage.setItem('rpgCharacters', JSON.stringify(savedCharacters));
+    return characterData.id;
+};
+
 // Adiciona estilo para os cards de personagem
 const style = document.createElement('style');
 style.textContent = `
     .character-card {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
     }
     
     .character-card:hover {
-        border-color: #f6b93b;
+        border-color: #5496f2;
         transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 13, 255, 0.3);
     }
     
     .character-header {
@@ -138,12 +253,13 @@ style.textContent = `
     }
     
     .character-level {
-        background: #f6b93b;
-        color: #000;
+        background: rgba(84, 150, 242, 0.3);
+        color: #ffffff;
         padding: 5px 10px;
         border-radius: 20px;
         font-weight: bold;
         font-size: 0.9rem;
+        border: 1px solid #5496f2;
     }
     
     .character-info p {
@@ -160,9 +276,9 @@ style.textContent = `
     .btn-play {
         flex: 1;
         padding: 10px;
-        background: linear-gradient(45deg, #e55039, #fa983a);
+        background: linear-gradient(45deg, rgba(0, 13, 255, 0.3), rgba(84, 150, 242, 0.3));
         color: white;
-        border: none;
+        border: 1px solid #5496f2;
         border-radius: 5px;
         cursor: pointer;
         display: flex;
@@ -174,11 +290,12 @@ style.textContent = `
     
     .btn-play:hover {
         transform: scale(1.05);
+        background: linear-gradient(45deg, rgba(0, 13, 255, 0.5), rgba(84, 150, 242, 0.5));
     }
     
     .btn-delete {
         padding: 10px 15px;
-        background: rgba(255, 0, 0, 0.2);
+        background: rgba(255, 107, 107, 0.1);
         color: #ff6b6b;
         border: 1px solid #ff6b6b;
         border-radius: 5px;
@@ -187,7 +304,7 @@ style.textContent = `
     }
     
     .btn-delete:hover {
-        background: rgba(255, 0, 0, 0.3);
+        background: rgba(255, 107, 107, 0.3);
     }
 `;
 
