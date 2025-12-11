@@ -26,7 +26,7 @@
         display: flex;
         align-items: center;
         padding: 20px 0;
-        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.534);
         margin-bottom: 40px;
     }
 
@@ -36,6 +36,7 @@
         align-items: center;
         gap: 15px;
         font-size: 1.8rem;
+        
     }
 
     .logo i {
@@ -66,7 +67,7 @@
     }
 
     .nav-link:hover {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.733);
         transform: translateY(-2px);
     }
 
@@ -147,7 +148,8 @@
 
     .floating-icons i {
         font-size: 4rem;
-        color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.705);
+        text-shadow: 0px 0px 30px #000dff9c;
         animation: float 6s ease-in-out infinite;
     }
 
